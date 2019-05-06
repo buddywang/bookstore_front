@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <el-row>
-          <el-col :span="10" :offset="2"><span style="font-size: 20px;" @click="goIndex"><a href="#">xx图书商城</a></span></el-col>
+          <el-col :span="10" :offset="2"><span style="font-size: 20px;" @click="goIndex"><a href="#"><span style="color: #996996;font-size:30px;">32123 </span>图书商城</a></span></el-col>
           <el-col :span="4" :offset="5">
             <el-input inline placeholder="搜索图书" v-model="searchkey" class="input">
               <el-button slot="append" icon="el-icon-search"></el-button>
@@ -17,19 +17,19 @@
               background-color="#000"
               text-color="#fff"
               active-text-color="#fff">
-              <el-submenu index="1" v-if="login">
+              <el-submenu index="1" v-if="islogin">
                 <template slot="title"><i class="el-icon-user-solid" style="font-size:25px;"></i></template>
                 <el-menu-item index="/usercenter/我的订单">我的订单</el-menu-item>
                 <el-menu-item index="/usercenter/收货地址">收货地址</el-menu-item>
                 <hr style="width:90%;">
-                <el-menu-item index="1-3">退出登录</el-menu-item>
+                <el-menu-item @click="logout">退出登录</el-menu-item>
               </el-submenu>
               <el-submenu index="1" v-else>
                 <template slot="title"><i class="el-icon-user-solid" style="font-size:25px;"></i></template>
                 <el-menu-item index="/register">注册</el-menu-item>
                 <el-menu-item index="/login">登录</el-menu-item>
               </el-submenu>
-              <el-menu-item v-if="login" index="/cart" style="border-bottom-color:#000;"><i class="el-icon-shopping-cart-2" style="font-size:25px;"></i></el-menu-item>
+              <el-menu-item v-if="islogin" index="/cart" style="border-bottom-color:#000;"><i class="el-icon-shopping-cart-2" style="font-size:25px;"></i></el-menu-item>
               <el-menu-item v-else index="/login" style="border-bottom-color:#000;"><i class="el-icon-shopping-cart-2" style="font-size:25px;"></i></el-menu-item>
             </el-menu>
           </el-col>
@@ -44,10 +44,18 @@ export default {
   data() {
     return {
       searchkey: '',
-      login: true,
     };
   },
+  computed:{
+    islogin(){
+      return this.$store.state.islogin
+    }
+  },
   methods: {
+    logout(){
+      this.$store.commit('updateIsLogin', false)
+    },
+
     goIndex(){
       this.$router.push('/index')
     }

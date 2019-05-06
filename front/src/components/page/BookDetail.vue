@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="content">
-    <el-row :gutter="20">
+    <el-row>
         <el-col :span="6" :offset="6">
             <div class="img">
               <el-image :src="bookinfos.picture" style="width:300px;height:400px;">
@@ -10,7 +10,7 @@
         <el-col :span="6">
           <el-card class="box-card" shadow=none >
             <div style="text-align:left;">
-              书名：{{bookinfos.title}}
+              书名：<span style="font-weight: bold;">{{bookinfos.title}}</span>
             </div>
             <div style="text-align:left;">
               作者：{{bookinfos.author}}
@@ -99,7 +99,8 @@ export default {
         }
       })
       .then(function(res){
-        console.log(res);
+        that.comments=res.data.data.comments;
+        that.commentsNum=res.data.data.commentsNum;
       })
       .catch(function(e) {
         console.log(e);
@@ -114,9 +115,7 @@ export default {
         url: 'http://127.0.0.1:8080/books/'+this.$route.params.bookid,
       })
       .then(function(res){
-        that.bookinfos = res.data.data.data
-        that.comments = res.data.data.comments
-        that.commentsNum = res.data.data.commentsNum
+        that.bookinfos = res.data.data
       })
       .catch(function(e) {
         console.log(e);
