@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <el-col :span="4" :offset="3">
         <div class="sidebar">
-          <el-card class="filter-card" shadow="hover">
+          <el-card class="filter-card" shadow="hover" v-show="false">
             <div class="item head">
               图书筛选
             </div>
@@ -32,7 +32,7 @@
           </el-card>
         </div>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="12" :offset="7">
         <div class="head" style="float:left;">
           图书-{{list_title}}
         </div>
@@ -81,6 +81,7 @@ export default {
   mounted(){
     this.getIndex();
     this.getCategory();
+    console.log('state.login',this.$store.state.islogin);
   },
   methods:{
     // 改变页数
@@ -174,6 +175,8 @@ export default {
   padding-bottom: 5px;
 }
 .category-card{
+  position: fixed;
+  width: 240px;
   margin-top: 5px;
 }
 .head{

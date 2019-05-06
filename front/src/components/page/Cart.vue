@@ -10,7 +10,7 @@
   <el-col :span="3">小计</el-col>
   <el-col :span="3">操作</el-col>
   </el-row>
-  <el-row v-for="x in y">
+  <el-row v-for="x in y" :key="x">
     <el-col :span="1"><el-checkbox v-model="checkone"></el-checkbox></el-col>
     <el-col :span="3"><el-image style="width: 100px; height: 100px" :src="url" :fit="fit"></el-image></el-col>
     <el-col :span="8"><div style="float: left">book1</div></el-col>
