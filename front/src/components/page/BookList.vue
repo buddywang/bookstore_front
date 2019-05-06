@@ -14,8 +14,8 @@
               <el-link :underline="false">价格从低到高</el-link>
             </div>
             <div class="item">
-              <el-input v-model="input" placeholder="最低价" class="filer_price"></el-input> -
-              <el-input v-model="input" placeholder="最高价" class="filer_price"></el-input>
+              <el-input v-model="minprice" placeholder="最低价" class="filer_price"></el-input> -
+              <el-input v-model="maxprice" placeholder="最高价" class="filer_price"></el-input>
               <el-button>确定</el-button>
             </div>
           </el-card>
@@ -23,33 +23,40 @@
             <div class="item head">
               图书类别
             </div>
-            <div v-for="category in categorys" :key="category" class="item">
-              <el-link :underline="false">{{ category }}</el-link>
+            <div class="item">
+              <el-link :underline="false" @click="getIndex">热门推荐</el-link>
+            </div>
+            <div v-for="category in categories" :key="category" class="item">
+              <el-link :underline="false" @click="getBookList(category)">{{ category }}</el-link>
             </div>
           </el-card>
         </div>
       </el-col>
       <el-col :span="12">
         <div class="head" style="float:left;">
-          热门推荐
+          图书-{{list_title}}
         </div>
         <div class="booklist">
           <el-card v-for="(book, index) in booklist"  :key="index" :body-style="{ padding: '0px' }" shadow="hover" class="book-card">
-            <img :src="book.src" class="image">
+            <img :src="book.picture" class="image">
             <div style="padding: 14px;text-align:left;">
-              <div><router-link :to="{ name: '详情', params: { bookid: index} }">{{book.bookname}}</router-link></div>
-              <div>{{book.author}}</div>
+              <div><router-link :to="{ name: '详情', params: { bookid: book.book_id} }">书名：{{book.title}}</router-link></div>
+              <div>作者：{{book.author}}</div>
+              <div>分类：{{book.category}}</div>
               <div>
-                <span>{{book.price}}</span>
+                <span>价格：{{book.price}}￥</span>
               </div>
             </div>
           </el-card>
         </div>
         <div class="pagination">
           <el-pagination
+            v-if="show"
             background
+            :page-size="12"
             layout="prev, pager, next"
-            :total="100">
+            @current-change="onChange"
+            :total="bookNum">
           </el-pagination>
         </div>
       </el-col>
@@ -62,54 +69,84 @@
 export default {
   data(){
     return {
-      input: '',
-      categorys: [
-        "全部",
-        "小说",
-        "玄幻",
-        "校园",
-        "青春",
-        "热血",
-        "文学"
-      ],
-      booklist:[
-        {
-          src: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-          bookname: "金瓶梅",
-          price: "1￥",
-          author: "鲁迅"
-        },
-        {
-          src: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-          bookname: "金瓶梅",
-          price: "1￥",
-          author: "鲁迅"
-        },
-        {
-          src: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-          bookname: "金瓶梅",
-          price: "1￥",
-          author: "鲁迅"
-        },
-        {
-          src: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-          bookname: "金瓶梅",
-          price: "1￥",
-          author: "鲁迅"
-        },
-        {
-          src: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-          bookname: "金瓶梅",
-          price: "1￥",
-          author: "鲁迅"
-        },
-        {
-          src: "https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png",
-          bookname: "金瓶梅",
-          price: "1￥",
-          author: "鲁迅"
+      list_title: '热门推荐',
+      show: true,
+      bookNum: 10,
+      minprice: '',
+      maxprice: '',
+      categories: [],
+      booklist:[]
+    }
+  },
+  mounted(){
+    this.getIndex();
+    this.getCategory();
+  },
+  methods:{
+    // 改变页数
+    onChange(e){
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://127.0.0.1:8080/categories/'+that.list_title,
+        params: {
+          page: e,
+          pageSize: 12
         }
-      ]
+      })
+      .then(function(res){
+        that.booklist=res.data.data.data
+      })
+      .catch(function(e) {
+        console.log(e);
+      })
+    },
+
+    // 获取首页图书信息
+    getIndex(){
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://127.0.0.1:8080/home',
+      })
+      .then(function(res){
+        that.booklist=res.data.data;
+      })
+      .catch(function(e) {
+        console.log(e);
+      })
+    },
+
+    // 获取图书所有分类
+    getCategory(){
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://127.0.0.1:8080/categories'
+      })
+      .then(function(res){
+        that.categories=res.data.data
+      })
+    },
+
+    // 获取某一图书分类信息
+    getBookList(category){
+      this.show=false;
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://127.0.0.1:8080/categories/'+category,
+        params: {
+          page: 1,
+          pageSize:12
+        }
+      })
+      .then(function(res){
+        that.booklist=res.data.data.data;
+        that.bookNum=res.data.data.totalNum;
+        that.list_title=category;
+        that.show=true;
+      })
     }
   }
 }
@@ -120,13 +157,10 @@ export default {
   margin: 20px;
 }
 .content{
-  margin-top: 15px;
+  margin-top: 75px;
 }
 .el-col{
   border-radius: 4px;
-}
-.sidebar{
-
 }
 .booklist{
   display: flex;
@@ -144,9 +178,17 @@ export default {
 }
 .head{
   font-weight: bold;
+  margin-bottom: 10px;
 }
 .book-card{
   width: 200px;
   margin: 10px;
 }
+.image{
+  width: 200px;
+  height: 250px;
+}
+a {
+    text-decoration: none;
+  }
 </style>

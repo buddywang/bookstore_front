@@ -3,23 +3,33 @@
     <el-row :gutter="20">
         <el-col :span="6" :offset="6">
             <div class="img">
-              <el-image :src="src" style="width:300px;height:400px;">
-                <div slot="placeholder" class="image-slot">
-                  加载中<span class="dot">...</span>
-                </div>
+              <el-image :src="bookinfos.picture" style="width:300px;height:400px;">
               </el-image>
             </div>
         </el-col>
         <el-col :span="6">
           <el-card class="box-card" shadow=none >
-            <div v-for="(value, key) in bookinfos" :key="key"  style="text-align:left;">
-              {{key}}：{{value}}
+            <div style="text-align:left;">
+              书名：{{bookinfos.title}}
+            </div>
+            <div style="text-align:left;">
+              作者：{{bookinfos.author}}
+            </div>
+            <div style="text-align:left;">
+              分类：{{bookinfos.category}}
+            </div>
+            <div style="text-align:left;">
+              出版社：{{bookinfos.publisher}}
+            </div>
+            <div style="text-align:left;">
+              价格：{{bookinfos.price}}￥
+            </div>
+            <div style="text-align:left;">
+              简介：{{bookinfos.description}}
             </div>
             <div style="text-align:left;margin: 10px 0;">
               <span>数量</span>
-              <i class="el-icon-remove lg" style="font-size:30px;padding:10px;" @click="minus"></i>
-              {{ quantity }}
-              <i class="el-icon-circle-plus" style="font-size:30px;padding:10px;" @click="plus"></i>
+              <el-input-number v-model="quantity" :min="0"></el-input-number>
             </div>
             <div style="text-align:left;">
               <el-button style="float:left;margin: 10px 0;">加入购物车</el-button>
@@ -56,7 +66,7 @@
       <el-pagination
         background
         layout="prev, pager, next"
-        :total="100">
+        :total="commentsNum">
       </el-pagination>
     </div>
   </div>
@@ -66,45 +76,52 @@
 export default {
   data(){
     return {
-      src: '',
+      commentsNum: 0,
       quantity: 0,
-      comments: [
-        {
-          name: 'john',
-          comment: 'i think so',
-          date: '2019/1/3'
-        },
-        {
-          name: 'Mike',
-          comment: 'good',
-          date: '2019/3/4'
-        },
-        {
-          name: 'Amy',
-          comment: 'pretty good',
-          date: '2019/4/5'
-        }
-      ],
-      bookinfos: {
-        title: '金瓶梅',
-        category: '文学',
-        author: '鲁迅',
-        price: '2$',
-        description: '独领风骚开发商浪费了士大夫士大夫精神了 收到了附件是打开附件是浪费了独领风骚了对方就是锻炼腹肌的死灵法师懒得浪费时间的理发师理发老师的方法'
-      }
+      comments: [],
+      bookinfos: {}
     }
   },
+  mounted(){
+    this.getBookDetail();
+    this.getComment();
+  },
   methods:{
-    handleClick(){
-      console.log(this.$route.params);
+    // 获取评论
+    getComment(){
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://127.0.0.1:8080/books/'+this.$route.params.bookid+'/comments',
+        params:{
+          page: 1,
+          pageSize: 12
+        }
+      })
+      .then(function(res){
+        console.log(res);
+      })
+      .catch(function(e) {
+        console.log(e);
+      })
     },
-    minus(){
-      if(this.quantity>0)
-        this.quantity--;
+
+    // 获取图书详情
+    getBookDetail(){
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://127.0.0.1:8080/books/'+this.$route.params.bookid,
+      })
+      .then(function(res){
+        that.bookinfos = res.data.data.data
+        that.comments = res.data.data.comments
+        that.commentsNum = res.data.data.commentsNum
+      })
+      .catch(function(e) {
+        console.log(e);
+      })
     },
-    plus(){
-      this.quantity++;
-    }
   }
 }
 </script>
@@ -114,7 +131,7 @@ export default {
   margin: 20px;
 }
 .content{
-  margin-top: 15px;
+  margin-top: 75px;
 }
 .comment-box{
   margin-top: 20px;

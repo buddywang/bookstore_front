@@ -17,14 +17,20 @@
               background-color="#000"
               text-color="#fff"
               active-text-color="#fff">
-              <el-submenu index="1">
+              <el-submenu index="1" v-if="login">
                 <template slot="title"><i class="el-icon-user-solid" style="font-size:25px;"></i></template>
-                <el-menu-item index="/usercenter">我的订单</el-menu-item>
-                <el-menu-item index="1-2">收货地址</el-menu-item>
+                <el-menu-item index="/usercenter/我的订单">我的订单</el-menu-item>
+                <el-menu-item index="/usercenter/收货地址">收货地址</el-menu-item>
                 <hr style="width:90%;">
                 <el-menu-item index="1-3">退出登录</el-menu-item>
               </el-submenu>
-              <el-menu-item index="2" style="border-bottom-color:#000;"><i class="el-icon-shopping-cart-2" style="font-size:25px;"></i></el-menu-item>
+              <el-submenu index="1" v-else>
+                <template slot="title"><i class="el-icon-user-solid" style="font-size:25px;"></i></template>
+                <el-menu-item index="/register">注册</el-menu-item>
+                <el-menu-item index="/login">登录</el-menu-item>
+              </el-submenu>
+              <el-menu-item v-if="login" index="/cart" style="border-bottom-color:#000;"><i class="el-icon-shopping-cart-2" style="font-size:25px;"></i></el-menu-item>
+              <el-menu-item v-else index="/login" style="border-bottom-color:#000;"><i class="el-icon-shopping-cart-2" style="font-size:25px;"></i></el-menu-item>
             </el-menu>
           </el-col>
         </el-row>
@@ -38,6 +44,7 @@ export default {
   data() {
     return {
       searchkey: '',
+      login: true,
     };
   },
   methods: {
@@ -54,6 +61,10 @@ export default {
     color: #fff;
     text-align: left;
     line-height: 60px;
+    position: fixed;
+    top:0;
+    width: 100%;
+    z-index: 2;
   }
   .el-col{
     text-align: left;

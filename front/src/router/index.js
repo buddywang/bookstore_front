@@ -6,6 +6,9 @@ import BookList from '@/components/page/BookList'
 import UserCenter from '@/components/page/UserCenter'
 import Login from '@/components/page/Login'
 import Register from '@/components/page/Register'
+import Cart from '@/components/page/Cart'
+import Affirm from '@/components/page/Affirm'
+import Manage from '@/components/page/Manage'
 
 Vue.use(Router)
 
@@ -30,21 +33,37 @@ export default new Router({
           component: BookList
         },
         {
-          path: '/usercenter',
+          path: '/usercenter/:menu',
           name: '用户中心',
           component: UserCenter
-        }
+        },
+        {
+          path: '/cart',
+          name: '购物车',
+          component: Cart
+        },
+        {
+          path: '/affirm',
+          name: '确认订单',
+          component: Affirm
+        },
+        {
+          path: '/register',
+          name: '注册',
+          component: Register
+        },
+        {
+          path: '/login',
+          name: '登录',
+          component: Login
+        },
       ]
     },
+
     {
-      path: '/register',
-      name: '注册',
-      component: Register
-    },
-    {
-      path: '/login',
-      name: '登录',
-      component: Login
+      path: '/manage',
+      name: '管理',
+      component: Manage
     }
   ]
 })
