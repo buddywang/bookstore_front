@@ -1,6 +1,8 @@
 <template lang="html">
-  <el-card style="background-color:#84C1FF"class="box-card">
-    <h2 style="color:black">注册xx商城账号</h2>
+  <el-card style="background-color:#fff"class="box-card" shadow="hover">
+    <div slot="header" class="clearfix">
+      <span style="font-size: 20px;font-weight: bold;">用户注册</span>
+    </div>
   <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
     <el-form-item label="用户名" prop="username">
       <el-input v-model="ruleForm.username"></el-input>
@@ -11,11 +13,10 @@
     <el-form-item label="确认密码" prop="checkPass">
       <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
     </el-form-item>
-    <el-form-item>
       <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
       <el-button @click="resetForm('ruleForm')">重置</el-button>
-    </el-form-item>
   </el-form>
+  <router-link style="float:right;margin-top:-25px;;" :to="{ name: '登录'}">我要登录</router-link>
   </el-card>
 </template>
 
@@ -75,19 +76,27 @@ methods: {
     form.append("password", this.ruleForm.pass)
     this.$ajax({
       method: 'post',
-      url: 'http://127.0.0.1:8080/register',
+      url: 'http://119.23.239.101:8080/register',
       header: "{'Content-Type': 'multipart/form-data;boundary=${form._boundary}}'",
       data: form
     })
     .then(function(res){
-      console.log(res)
       if(res.data.data=="注册成功")
       {
-      alert("注册成功!");
-      location.href ='http://localhost:8081/#/login';
+        that.$message({
+          type: 'success',
+          message: '注册成功，请登录！'
+        });
+        setTimeout(() => {
+          that.$router.push('/login')
+        }, 1500)
       }
-      else
-      alert("注册失败!!");
+      else{
+        that.$message({
+          type: 'warning',
+          message: '注册失败,用户已存在！'
+        });
+      }
     })
     .catch(function(ruleForm) {
       console.log(ruleForm.msg);

@@ -37,8 +37,8 @@
           图书-{{list_title}}
         </div>
         <div class="booklist">
-          <el-card v-for="(book, index) in booklist"  :key="index" :body-style="{ padding: '0px' }" shadow="hover" class="book-card">
-            <img :src="book.picture" class="image">
+          <el-card v-for="(book, index) in booklist" :key="index" :body-style="{ padding: '0px' }" shadow="hover" class="book-card">
+            <img :src="book.picture" class="image" @click="goDetail(book.book_id)">
             <div style="padding: 14px;text-align:left;">
               <div><router-link :to="{ name: '详情', params: { bookid: book.book_id} }">书名：{{book.title}}</router-link></div>
               <div>作者：{{book.author}}</div>
@@ -81,15 +81,18 @@ export default {
   mounted(){
     this.getIndex();
     this.getCategory();
-    console.log('state.login',this.$store.state.islogin);
   },
   methods:{
+    goDetail(bookid){
+      this.$router.push('/bookdetail/'+bookid);
+    },
+
     // 改变页数
     onChange(e){
       let that=this;
       this.$ajax({
         method: 'get',
-        url: 'http://127.0.0.1:8080/categories/'+that.list_title,
+        url: 'http://119.23.239.101:8080/categories/'+that.list_title,
         params: {
           page: e,
           pageSize: 12
@@ -108,10 +111,12 @@ export default {
       let that=this;
       this.$ajax({
         method: 'get',
-        url: 'http://127.0.0.1:8080/home',
+        url: 'http://119.23.239.101:8080/home',
       })
       .then(function(res){
         that.booklist=res.data.data;
+        that.bookNum=1;
+        that.list_title="热门推荐";
       })
       .catch(function(e) {
         console.log(e);
@@ -123,7 +128,7 @@ export default {
       let that=this;
       this.$ajax({
         method: 'get',
-        url: 'http://127.0.0.1:8080/categories'
+        url: 'http://119.23.239.101:8080/categories'
       })
       .then(function(res){
         that.categories=res.data.data
@@ -136,7 +141,7 @@ export default {
       let that=this;
       this.$ajax({
         method: 'get',
-        url: 'http://127.0.0.1:8080/categories/'+category,
+        url: 'http://119.23.239.101:8080/categories/'+category,
         params: {
           page: 1,
           pageSize:12

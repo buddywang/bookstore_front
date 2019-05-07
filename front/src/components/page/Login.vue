@@ -11,8 +11,8 @@
       <el-input style="width:250px;" type="password" v-model="loginRuleform.password" autocomplete="off"></el-input>
     </el-form-item>
     <el-button type="primary" @click="submitForm('loginRuleform')" >登录</el-button>
-    <router-link style="float:right;" :to="{ name: '注册'}">我要注册</router-link>
   </el-form>
+  <router-link style="float:right;margin-top:-25px;" :to="{ name: '注册'}">我要注册</router-link>
   </el-card>
 </template>
 
@@ -58,11 +58,12 @@ methods: {
         form.append("password", this.loginRuleform.password);
         that.$ajax({
           method: 'post',
-          url: 'http://127.0.0.1:8080/users',
+          url: 'http://119.23.239.101:8080/users',
           headers:{'Content-Type': 'multipart/form-data; boundary=${form._boundary}'},
           data: form
         })
         .then(function(res){
+          console.log(res.data.statusCode)
           if(res.data.statusCode=="200"){
             console.log('success');
             that.$store.commit('updateIsLogin', true);

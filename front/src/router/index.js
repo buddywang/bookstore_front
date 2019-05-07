@@ -9,10 +9,12 @@ import Register from '@/components/page/Register'
 import Cart from '@/components/page/Cart'
 import Affirm from '@/components/page/Affirm'
 import Manage from '@/components/page/Manage'
+import Pay from '@/components/page/Pay'
 
 Vue.use(Router)
 
 export default new Router({
+  // base: '/'
   routes: [
     {
       path: '/',
@@ -56,6 +58,11 @@ export default new Router({
           path: '/login',
           name: '登录',
           component: Login
+        },
+        {
+          path: '/pay',
+          name: '付款',
+          component: Pay
         },
       ]
     },

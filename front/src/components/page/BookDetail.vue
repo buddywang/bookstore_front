@@ -32,8 +32,8 @@
               <el-input-number v-model="quantity" :min="0"></el-input-number>
             </div>
             <div style="text-align:left;">
-              <el-button style="float:left;margin: 10px 0;">加入购物车</el-button>
-              <el-button style="float:right;margin: 10px 0;">现在购买</el-button>
+              <el-button type="info" style="float:left;margin: 10px 0;">加入购物车</el-button>
+              <el-button type='primary' style="float:right;margin: 10px 0;" @click="goAffirm">现在购买</el-button>
             </div>
           </el-card>
         </el-col>
@@ -87,12 +87,19 @@ export default {
     this.getComment();
   },
   methods:{
+    goAffirm(){
+      if(this.$store.state.islogin){
+        this.$router.push('/affirm');
+      } else {
+          this.$router.push('/login');
+        }
+    },
     // 获取评论
     getComment(){
       let that=this;
       this.$ajax({
         method: 'get',
-        url: 'http://127.0.0.1:8080/books/'+this.$route.params.bookid+'/comments',
+        url: 'http://119.23.239.101:8080/books/'+this.$route.params.bookid+'/comments',
         params:{
           page: 1,
           pageSize: 12
@@ -112,7 +119,7 @@ export default {
       let that=this;
       this.$ajax({
         method: 'get',
-        url: 'http://127.0.0.1:8080/books/'+this.$route.params.bookid,
+        url: 'http://119.23.239.101:8080/books/'+this.$route.params.bookid,
       })
       .then(function(res){
         that.bookinfos = res.data.data
