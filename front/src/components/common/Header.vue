@@ -53,7 +53,8 @@ export default {
   },
   methods: {
     logout(){
-      this.$store.commit('updateIsLogin', false)
+      this.$store.commit('updateIsLogin', false);
+      this.goIndex();
     },
 
     goIndex(){

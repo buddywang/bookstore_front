@@ -27,7 +27,7 @@
                   <span class="text">总付款 {{item.cost}} 元</span>
                 </div>
                 <hr>
-                <div v-for="book in item.booklist"  :key="book.book_id" style="margin:10px;">
+                <div v-for="book in item.book_list"  :key="book.book_id" style="margin:10px;">
                   <el-row>
                       <el-col :span="4">
                           <el-image :src="book.picture" style="width:80px;height:80px;"></el-image>
@@ -37,7 +37,7 @@
                             {{book.title}}
                           </div>
                           <div>
-                            {{book.price}}
+                            {{book.price}} ￥
                           </div>
                           <div>
                             购买数量：{{book.quautity}}
@@ -151,51 +151,32 @@ export default {
           });
         });
     },
+
+    // 获取我的订单
     getOrder(){
-      this.orders=[
-        {
-          order_id: '123dd3455',
-          date: '2018/3/4',
-          count: 5,
-          cost: "33$",
-          booklist: [
-            {
-              price: '3$',
-              quautity: 3,
-              title: '金瓶梅',
-              picture: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-              book_id: 'ss333'
-            },
-            {
-              price: '3$',
-              quautity: 6,
-              title: '笑傲江湖',
-              picture: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-              book_id: '3d33'
-            }
-          ]
-        },
-        {
-          order_id: '1233455',
-          date: '2018/3/4',
-          booklist: [
-            {
-              price: '3$',
-              quautity: 3,
-              title: '金瓶梅',
-              picture: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-              book_id: '333'
-            },
-            {
-              price: '3$',
-              quautity: 3,
-              title: '金瓶梅',
-              picture: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-              book_id: '3dff33'
-            }
-          ]
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://119.23.239.101:8080/orders'
+      })
+      .then(function(res){
+        console.log('order',res);
+        if(res.msg==='未登录'){
+          that.$store.commit('updateIsLogin', false);
+          that.$message({
+            type: 'info',
+            message: '请登录'
+          });
+          that.$router.push('/index');
+          return;
         }
-      ];
+        if(res.data.statusCode==200){
+          that.orders=res.data.data
+        }
+      })
+      .catch(function(e) {
+        console.log(e);
+      })
     },
     getAddress(){
       this.addresses=[

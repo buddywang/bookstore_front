@@ -29,10 +29,10 @@
             </div>
             <div style="text-align:left;margin: 10px 0;">
               <span>数量</span>
-              <el-input-number v-model="quantity" :min="0"></el-input-number>
+              <el-input-number v-model="quantity" :min="1"></el-input-number>
             </div>
             <div style="text-align:left;">
-              <el-button type="info" style="float:left;margin: 10px 0;">加入购物车</el-button>
+              <el-button type="info" style="float:left;margin: 10px 0;" @click="addToCart">加入购物车</el-button>
               <el-button type='primary' style="float:right;margin: 10px 0;" @click="goAffirm">现在购买</el-button>
             </div>
           </el-card>
@@ -87,6 +87,47 @@ export default {
     this.getComment();
   },
   methods:{
+    // 添加到购物车
+    addToCart(){
+      const that=this;
+      var form = new FormData();
+      form.append("book_id", this.bookinfos.book_id);
+      form.append("quantity", this.quantity);
+      that.$ajax({
+        method: 'post',
+        url: 'http://119.23.239.101:8080/carts',
+        headers:{'Content-Type': 'multipart/form-data; boundary=${form._boundary}'},
+        data: form,
+      })
+      .then(function(res){
+        console.log('addtocart',res);
+        if(res.msg==='未登录'){
+          that.$store.commit('updateIsLogin', false);
+          that.$message({
+            type: 'info',
+            message: '请登录'
+          });
+          return;
+        }
+        if(res.data.statusCode=="200"){
+          console.log('addtocart success');
+          that.$message({
+            type: 'success',
+            message: '成功添加到购物车'
+          });
+        }else{
+          that.$message({
+            type: 'info',
+            message: res.data.msg
+          });
+        }
+      })
+      .catch(function(e) {
+        console.log(e);
+      })
+    },
+
+    // 跳转确认订单
     goAffirm(){
       if(this.$store.state.islogin){
         this.$router.push('/affirm');
@@ -94,6 +135,7 @@ export default {
           this.$router.push('/login');
         }
     },
+
     // 获取评论
     getComment(){
       let that=this;
