@@ -6,15 +6,15 @@
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="收货地址" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="form.address" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="收货号码" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+          <el-input v-model="form.telephone" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
       </div>
     </el-dialog>
   <el-card class="box-card" shadow="hover">
@@ -22,6 +22,17 @@
       <span style="float: left">收货信息</span>
     </div>
     <el-row>
+      <div v-for="item in address">
+      <el-col :span="8">
+        <el-card>
+          <el-button type="primary" class="del" size="mini" icon="el-icon-delete" @click="deleteAdderss(item.address)">
+          </el-button>
+          <div>收货地址：{{item.address}}</div>
+          <div>收货者姓名：{{item.name}}</div>
+          <div>收货者电话：{{item.telephone}}</div>
+        </el-card>
+      </el-col>
+      </div>     
       <el-col :span="4">
     <el-card shadow="hover">
       <el-row>
@@ -57,7 +68,8 @@
     <hr>
     </el-row>
     <el-row style="line-height:30px;">
-      <el-col :span="4" :offset="18"><div>应付总额 {{num*price}} ￥</div></el-col>
+      <el-col :span="4" :offset="14"><el-select :value="selAddress" placeholder="选择收货地址"><el-option v-for="item in address" :key="item.$index" :label="item.address" :value="1"></el-option></el-select></el-col>
+      <el-col :span="4"><div>应付总额 {{num*price}} ￥</div></el-col>
       <el-col :span="2"><el-button type="primary" @click="goPay">提交订单</el-button></el-col>
     </el-row>
   </el-card>
@@ -68,32 +80,113 @@
   export default {
     data () {
       return {
-        fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
+        totalNum:'',
+        totalPrice:'',
+        selAddress:'',
+        checkedval:false,
+        address:[],
+        list:[],
         url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
         num:1,
         price:50,
-       dialogTableVisible: false,
        dialogFormVisible: false,
        form: {
-         name: '',
-         region: '',
-         date1: '',
-         date2: '',
-         delivery: false,
-         type: [],
-         resource: '',
-         desc: ''
+        address:'',
+        name:'',
+        telephone:1,
        },
        formLabelWidth: '120px'
     }
   },
+
+  mounted(){
+    this.getAddress();
+    this.getList();
+  },
+
   methods: {
     goPay(){
       this.$router.push('/pay');
     },
-      handleChange(value) {
-        console.log(value);
-      },
+
+    deleteAdderss(val){
+      let that=this;
+      var form=new FormData()
+      form.append("address",val)
+      that.$ajax({
+        method:'delete',
+        url:'http://119.23.239.101:8080/address',
+        header:"{'Content-Type': 'multipart/form-data;boundary=${form._boundary}}'",
+        data:form,
+      })
+      .then(function(res){
+        if(res.data.msg=="OK"){
+          that.$message({
+            type:'success',
+            message:'删除地址成功',
+          })
+          that.getAddress()
+        }
+        else{
+          that.$message({
+            type:'warning',
+            message:'删除地址失败',
+          })
+        }
+      })      
+    },
+
+    add(){
+      let that=this;
+      var form=new FormData()
+      form.append("address",this.form.address)
+      form.append("name",this.form.name)
+      form.append("telephone",this.form.telephone)
+      that.$ajax({
+        method:'put',
+        url:'http://119.23.239.101:8080/address',
+        header:"{'Content-Type': 'multipart/form-data;boundary=${form._boundary}}'",
+        data:form,
+      })
+      .then(function(res){
+        if(res.data.msg=="OK"){
+          that.$message({
+            type:'success',
+            message:'添加地址成功',
+          })
+          that.getAddress()
+        }
+        else{
+          that.$message({
+            type:'warning',
+            message:'添加地址失败',
+          })
+        }
+      })
+      that.dialogFormVisible=false;
+    },
+
+    getList(){
+      let that=this;
+      this.$ajax({
+        mehtod:'get',
+        url:'http://119.23.239.101:8080/orders',
+      })
+      .then(function(res){
+        console.log(res);
+      })
+    },
+
+    getAddress(){
+      let that=this;
+      this.$ajax({
+        method: 'get',
+        url: 'http://119.23.239.101:8080/address',
+      })
+      .then(function(res){
+        that.address=res.data.data;
+      })
+    },
     }
 }
 </script>
@@ -114,6 +207,11 @@
   }
   .clearfix:after {
     clear: both
+  }
+
+  .del{
+    position:relative;
+    left:120px;
   }
 
   .box-card {

@@ -74,6 +74,11 @@
         totalNum: 0,
         totalPrice: 0,
         cartlist: [],
+        form:[],
+        list:{
+          book_id:'',
+          quantity:'',
+        }
     }
   },
   mounted(){
@@ -125,25 +130,42 @@
         }
         that.cartlist = res.data.data;
       })
-      .catch(function(e) {
-        console.log(e);
-      })
     },
 
     goAffirm(){
-      this.$router.push('/affirm');
+      let that=this;
+      that.cartlist.forEach(i=>{
+        if(i.isable==true){
+          that.list.book_id=i.book_id;
+          that.list.quantity=i.quantity;
+          that.form.push(that.list);
+        }
+      })
+      console.log(that.form)
+      var form=new FormData()
+      form.append("orderLists",that.form)
+      that.$ajax({
+        method:'post',
+        url:'http://110.64.87.189:8080/orders',
+        headers:{'Content-Type': 'multipart/form-data; boundary=${form._boundary}'},
+        data:[{"bookId":"a","quantity":2},{"bookId":"b","quantity":2}],
+      })
+      .then(function(res){
+        console.log(res)
+      })
+      //this.$router.push('/affirm');
     },
+
     handleChange(row) {
       // console.log('row',row);
-
     },
+
     handleCheckAllChange(value){
       this.check.map(n => value);
     },
 
     // 从购物车中删除商品
     deleteCart(index, row){
-      console.log('delete');
       const that=this;
       var form = new FormData();
       form.append("book_id", row.book_id);
@@ -154,15 +176,11 @@
         data: form,
       })
       .then(function(res){
-        console.log('delete success', res);
         that.$message({
           type: 'success',
           message: '删除成功'
         });
         that.cartlist.splice(index, 1);
-      })
-      .catch(function(e) {
-        console.log(e);
       })
     }
   }
