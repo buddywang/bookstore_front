@@ -11,20 +11,21 @@
     </el-col>
     <el-col :span="3" style="margin-top:12px;" :offset="1">
       <el-input  placeholder="搜索图书" v-model="searchkey" class="input">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input>
     </el-col>
+  <router-link  class="out" :to="{ name: '首页'}">退出</router-link>
   </el-menu>
   <el-card class="big-card">
     <div v-for="book in booklist" :key="book.book_id">
     <el-card class="small-card">
     <el-row >
-      <el-col :span="3"><el-image style="width: 100px; height: 100px" :src="book.picture"></el-image></el-col>
+      <el-col :span="3"><el-image style="width: 100px; height: 100px" :src="book.picture" v-show="isShow"></el-image></el-col>
       <el-col :span="6">
         <el-row>id：{{book.book_id}}</el-row>
         <el-row>名称：{{book.title}}</el-row>
-        <el-row>价格：{{book.price}}</el-row>
-        <el-row>类别：{{book.category}}</el-row>
+        <el-row v-show="isShow">价格：{{book.price}}</el-row>
+        <el-row v-show="isShow">类别：{{book.category}}</el-row>
       </el-col>
       <el-col :span="3" :offset="10">
         <el-row><el-button type="primary" @click="change(book.book_id)">修改</el-button></el-row>
@@ -112,7 +113,12 @@
 export default {
   data() {
     return {
+      isShow:true,
       isRouterAlive:true,
+      bookinfos:{
+        price:'',
+        category:'',
+      },
       List_title:'',
       categories:[],
       booklist:[],
@@ -166,10 +172,26 @@ export default {
   methods: {
 
     getIndex(){
+      this.isShow=true;
       let that=this;
       this.$ajax({
         method: 'get',
         url: 'http://119.23.239.101:8080/home',
+      })
+      .then(function(res){
+        that.booklist=res.data.data;
+      })
+    },
+
+    search(){
+      this.isShow=false;
+      let that=this;
+      this.$ajax({
+        method:'get',
+        url:'http://119.23.239.101:8080/search',
+        params:{
+          keyword:this.searchkey
+        }
       })
       .then(function(res){
         that.booklist=res.data.data;
@@ -268,6 +290,7 @@ export default {
     },
 
     onChange(e){
+      this.isShow=true;
       let that=this;
       this.$ajax({
         method: 'get',
@@ -283,6 +306,7 @@ export default {
     },
 
     getBookList(category){
+      this.isShow=true;
       this.show=false;
       let that=this;
       this.$ajax({
@@ -344,6 +368,7 @@ export default {
     },
 
     getCategory(){
+      this.isShow=true;
       let that=this;
       this.$ajax({
         method: 'get',
@@ -369,5 +394,9 @@ export default {
   top:10%;
 width: 1200px;
 height: 730px;
+}
+.out{
+  position:relative;
+  top:20px;
 }
 </style>

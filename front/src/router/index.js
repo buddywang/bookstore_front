@@ -10,6 +10,7 @@ import Cart from '@/components/page/Cart'
 import Affirm from '@/components/page/Affirm'
 import Manage from '@/components/page/Manage'
 import Pay from '@/components/page/Pay'
+import SearchPage from '@/components/page/SearchPage'
 
 Vue.use(Router)
 
@@ -67,6 +68,11 @@ export default new Router({
       ]
     },
 
+    {
+      path: '/SearchPage',
+      name: '搜索',
+      component: SearchPage
+    },
     {
       path: '/manage',
       name: '管理',

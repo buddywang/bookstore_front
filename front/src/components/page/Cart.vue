@@ -74,11 +74,7 @@
         totalNum: 0,
         totalPrice: 0,
         cartlist: [],
-        form:[],
-        list:{
-          book_id:'',
-          quantity:'',
-        }
+        choose:[],
     }
   },
   mounted(){
@@ -133,27 +129,18 @@
     },
 
     goAffirm(){
-      let that=this;
-      that.cartlist.forEach(i=>{
+      this.cartlist.forEach(i =>{
         if(i.isable==true){
-          that.list.book_id=i.book_id;
-          that.list.quantity=i.quantity;
-          that.form.push(that.list);
+          this.choose.push(i);
+        }
+      }) 
+      console.log(this.choose);
+      this.$router.push({
+        path:'/affirm',
+        query:{
+          choose: JSON.stringify(this.choose),
         }
       })
-      console.log(that.form)
-      var form=new FormData()
-      form.append("orderLists",that.form)
-      that.$ajax({
-        method:'post',
-        url:'http://110.64.87.189:8080/orders',
-        headers:{'Content-Type': 'multipart/form-data; boundary=${form._boundary}'},
-        data:[{"bookId":"a","quantity":2},{"bookId":"b","quantity":2}],
-      })
-      .then(function(res){
-        console.log(res)
-      })
-      //this.$router.push('/affirm');
     },
 
     handleChange(row) {

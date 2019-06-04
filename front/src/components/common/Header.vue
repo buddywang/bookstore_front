@@ -5,9 +5,15 @@
         <el-row>
           <el-col :span="10" :offset="2"><span style="font-size: 20px;" @click="goIndex"><a href="#"><span style="color: #996996;font-size:30px;">32123 </span>图书商城</a></span></el-col>
           <el-col :span="4" :offset="5">
-            <el-input inline placeholder="搜索图书" v-model="searchkey" class="input">
-              <el-button slot="append" icon="el-icon-search"></el-button>
-            </el-input>
+             <el-autocomplete
+             class="inline-input"
+             v-model="state1"
+             :fetch-suggestions="querySearch"
+             placeholder="请输入内容"
+             :trigger-on-focus="false"
+             suffix-icon="el-icon-search"
+             @select="getDetail">
+             </el-autocomplete>
           </el-col>
           <el-col :span="3">
             <el-menu
@@ -43,6 +49,8 @@
 export default {
   data() {
     return {
+      state1:'',
+      searchlist:[],
       searchkey: '',
     };
   },
@@ -55,6 +63,36 @@ export default {
     logout(){
       this.$store.commit('updateIsLogin', false);
       this.goIndex();
+    },
+
+    querySearch(queryString,cb){
+      var showlist=[];
+      let that=this;
+      that.$ajax({
+        method:'get',
+        url:'http://119.23.239.101:8080/search',
+        params:{
+          keyword:queryString
+        }
+      })
+      .then(function(res){
+        that.searchlist=res.data.data;
+        that.searchlist.forEach(i=>{
+          i.value=i.title;
+          showlist.push(i);
+        })
+        cb(showlist)    
+      })
+    },
+
+    getDetail(val){
+      if(this.$router.path!='bookdetail'){
+        this.$router.push('/bookdetail/'+val.book_id);
+      }
+      else{
+        this.$route.params.id=val.book_id;
+      }
+      this.$router.go(0)
     },
 
     goIndex(){

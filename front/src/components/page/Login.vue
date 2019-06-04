@@ -10,6 +10,7 @@
     <el-form-item label="密码" prop="password">
       <el-input style="width:250px;" type="password" v-model="loginRuleform.password" autocomplete="off"></el-input>
     </el-form-item>
+    <el-button class="manager" type="primary" @click="submit('loginRuleform')" >管理员登录</el-button>
     <el-button type="primary" @click="submitForm('loginRuleform')" >登录</el-button>
   </el-form>
   <router-link style="float:right;margin-top:-25px;" :to="{ name: '注册'}">我要注册</router-link>
@@ -86,6 +87,15 @@ methods: {
       }
     });
   },
+
+  submit(){
+    if(this.loginRuleform.username=='hao'){
+      if(this.loginRuleform.password=='123'){
+        this.$router.push('/Manage')
+      }
+    }
+  },
+
   resetForm(formName) {
     this.$refs[formName].resetFields();
   }
@@ -99,5 +109,10 @@ methods: {
       left: 36%;
       top:20%;
     width:400px;
+  }
+
+  .manager{
+    position:relative;
+    right:60px;
   }
 </style>

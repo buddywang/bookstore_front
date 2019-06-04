@@ -56,21 +56,23 @@
       <el-col :span="3">数量</el-col>
       <el-col :span="3">小计</el-col>
     </el-row>
+    <div v-for="item in list">
     <el-row style="margin: 20px 0;">
-      <el-col :span="3"><el-image style="width: 100px; height: 100px" :src="url"></el-image></el-col>
-      <el-col :span="8"><div style="float: left">book1</div></el-col>
-      <el-col :span="3" :offset="4"><div>￥50</div></el-col>
-      <el-col :span="3"><div>{{num}}</div></el-col>
-      <el-col :span="3"><div>￥50</div></i></el-col>
+      <el-col :span="3"><el-image style="width: 100px; height: 100px" :src="item.picture"></el-image></el-col>
+      <el-col :span="8"><div style="float: left">{{item.title}}</div></el-col>
+      <el-col :span="3" :offset="4"><div>￥{{item.price}}</div></el-col>
+      <el-col :span="3"><div>{{item.quantity}}</div></el-col>
+      <el-col :span="3"><div>￥{{item.price*item.quantity}}</div></i></el-col>
     </el-row>
+    </div>
     <el-row>
     </br>
     <hr>
     </el-row>
     <el-row style="line-height:30px;">
-      <el-col :span="4" :offset="14"><el-select :value="selAddress" placeholder="选择收货地址"><el-option v-for="item in address" :key="item.$index" :label="item.address" :value="1"></el-option></el-select></el-col>
-      <el-col :span="4"><div>应付总额 {{num*price}} ￥</div></el-col>
-      <el-col :span="2"><el-button type="primary" @click="goPay">提交订单</el-button></el-col>
+      <el-col :span="4" :offset="14"><el-select v-model="selAddress" placeholder="选择收货地址"><el-option v-for="item in address" :key="item.$index" :label="item.address" :value="item.address"></el-option></el-select></el-col>
+      <el-col :span="4"><div>应付总额 {{totalNum}} ￥</div></el-col>
+      <el-col :span="2"><el-button  :disabled="selAddress==''" type="primary" @click="goPay">提交订单</el-button></el-col>
     </el-row>
   </el-card>
 </div>
@@ -80,9 +82,8 @@
   export default {
     data () {
       return {
-        totalNum:'',
-        totalPrice:'',
         selAddress:'',
+        totalNum:0,
         checkedval:false,
         address:[],
         list:[],
@@ -100,13 +101,60 @@
   },
 
   mounted(){
+    this.list=JSON.parse(this.$route.query.choose);
     this.getAddress();
-    this.getList();
+    this.computed();
   },
 
   methods: {
     goPay(){
+      let that=this;
+      var count=0;
+      var orderlist="[";
+      var length =this.list.length;
+      this.list.forEach(i=>{
+        count++;
+        orderlist+='{"bookId":"';
+        orderlist+=i.book_id;
+        orderlist+='","quantity":';
+        orderlist+=i.quantity;
+        orderlist+='}'
+        if(count!==length)
+          orderlist+=',';
+        else
+          orderlist+=']'
+      })
+      console.log(orderlist)
+      var form=new FormData()
+      form.append("orderLists",orderlist)
+      that.$ajax({
+        method:'post',
+        url:'http://119.23.239.101:8080/orders',
+        header:"{'Content-Type': 'multipart/form-data;boundary=${form._boundary}}'",
+        data:form,
+      })
+      .then(function(res){
+        console.log(res)
+        if(res.data.msg=='OK'){
+          that.$message({
+            type:'success',
+            message:'购买成功'
+          })
+        }
+        else{
+          that.$message({
+            type:'warning',
+            message:'购买失败'
+          })
+        }
+      })
       this.$router.push('/pay');
+    },
+
+    computed(){
+      this.list.forEach(i=>{
+        this.totalNum+=i.price*i.quantity;
+      })
     },
 
     deleteAdderss(val){
@@ -164,17 +212,6 @@
         }
       })
       that.dialogFormVisible=false;
-    },
-
-    getList(){
-      let that=this;
-      this.$ajax({
-        mehtod:'get',
-        url:'http://119.23.239.101:8080/orders',
-      })
-      .then(function(res){
-        console.log(res);
-      })
     },
 
     getAddress(){
