@@ -24,7 +24,7 @@
     <el-row>
       <div v-for="item in address">
       <el-col :span="8">
-        <el-card>
+        <el-card class="add">
           <el-button type="primary" class="del" size="mini" icon="el-icon-delete" @click="deleteAdderss(item.address)">
           </el-button>
           <div>收货地址：{{item.address}}</div>
@@ -34,7 +34,7 @@
       </el-col>
       </div>     
       <el-col :span="4">
-    <el-card shadow="hover">
+    <el-card shadow="hover" class="add">
       <el-row>
         <el-button type="text" @click="dialogFormVisible = true" icon="el-icon-circle-plus" style="font-size:20px"></el-button>
       </el-row>
@@ -235,6 +235,9 @@
 
   .item {
     margin-bottom: 18px;
+  }
+  .add{
+    height:120px;
   }
 
   .clearfix:before,

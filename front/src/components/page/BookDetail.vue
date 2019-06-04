@@ -33,7 +33,6 @@
             </div>
             <div style="text-align:left;">
               <el-button type="info" style="float:left;margin: 10px 0;" @click="addToCart">加入购物车</el-button>
-              <el-button type='primary' style="float:right;margin: 10px 0;" @click="goAffirm">现在购买</el-button>
             </div>
           </el-card>
         </el-col>
@@ -52,7 +51,7 @@
                   <el-col :span="22">
                       <div>
                         {{comment.name}}
-                        <span style="float: right;color:gray;">{{comment.date}}</span>
+                        <span style="float: right;color:gray;">{{comment.date|dateFmt('YYYY-MM-DD')}}</span>
                       </div>
                       <div style="margin: 10px;color: gray;">
                         {{comment.comment}}
@@ -87,6 +86,7 @@ export default {
     this.getComment();
   },
   methods:{
+
     // 添加到购物车
     addToCart(){
       const that=this;
@@ -150,6 +150,9 @@ export default {
       .then(function(res){
         that.comments=res.data.data.comments;
         that.commentsNum=res.data.data.commentsNum;
+      //   that.comments.forEach(i=>{
+      //   i.date=new Date(parseInt(i.date) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');  
+      // })
       })
       .catch(function(e) {
         console.log(e);

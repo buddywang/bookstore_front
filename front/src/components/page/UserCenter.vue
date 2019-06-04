@@ -21,7 +21,7 @@
             <div class="orderlist" style="text-align: left;margin-top:20px;" v-if="list_title=='我的订单'">
               <el-card class="order" v-for="item in orders"  :key="item.order_id" shadow="hover">
                 <div class="order-info">
-                  <span class="text">时间：{{item.date}}</span>
+                  <span class="text">时间：{{item.date|dateFmt('YYYY-MM-DD')}}</span>
                   <span class="text">订单ID：{{item.order_id}}</span>
                   <span class="text">共 {{item.total_quantity}} 件商品</span>
                   <span class="text">总付款 {{item.total_price}} 元</span>
