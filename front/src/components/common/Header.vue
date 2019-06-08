@@ -11,7 +11,7 @@
              :fetch-suggestions="querySearch"
              placeholder="请输入内容"
              :trigger-on-focus="false"
-             suffix-icon="el-icon-search"
+             prefix-icon="el-icon-search"
              @select="getDetail">
              </el-autocomplete>
           </el-col>

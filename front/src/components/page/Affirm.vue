@@ -211,6 +211,12 @@
           })
         }
       })
+      .catch(function(reason){
+        that.$message({
+            type:'warning',
+            message:'添加地址失败',
+          })
+      })
       that.dialogFormVisible=false;
     },
 

@@ -1,13 +1,13 @@
 // import "babel-polyfill";
 import 'babel-polyfill'
 import Vue from 'vue'
-import App from './App'
 import axios from 'axios'
 import router from './router'
 import ElementUI from 'element-ui'
 import '../theme/index.css'
 import store from './store'
 import moment from 'moment'
+import App from './App'
 
 axios.defaults.withCredentials=true;//让ajax携带cookie
 Vue.prototype.$ajax = axios;
