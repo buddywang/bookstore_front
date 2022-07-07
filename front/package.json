@@ -15,7 +15,7 @@
     "babel-polyfill": "^6.26.0",
     "element-ui": "^2.8.2",
     "es6-promise": "^4.2.6",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "promise-polyfill": "^8.1.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
